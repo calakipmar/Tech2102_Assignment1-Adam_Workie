@@ -3,11 +3,11 @@
     function getUser($email) {
         
         global $db;
-        $query = 'SELECT * FROM user WHERE email = :email';
+        $query = 'SELECT * FROM users WHERE email = :email';
         $statement = $db->prepare($query);
         $statement->bindValue(':email', $email);
-        $user = $statement->fetch(PDO::FETCH_ASSOC);
         $statement->execute();
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
         $statement->closeCursor();
         return $user;
     }
@@ -16,7 +16,7 @@
         
 
         global $db;
-        $query = 'INSERT INTO user(username, email, password) VALUES (:username, :email, :password)';
+        $query = 'INSERT INTO users(username, email, password) VALUES (:username, :email, :password)';
         $statement = $db->prepare($query);
         $statement->bindValue(':email', $email);
         $statement->bindValue(':username', $name);
@@ -27,13 +27,13 @@
 
     function userExists($email){
         global $db;
-        $query = 'SELECT * FROM user WHERE email = :email';
+        $query = 'SELECT * FROM users WHERE email = :email';
         $statement = $db->prepare($query);
         $statement->bindValue(':email', $email);
-        $count = $statement->rowCount() > 0;
         $statement->execute();
+        $count = $statement->rowCount();
         $statement->closeCursor();
-        return $count;
+        return $count > 0;
     }
 
     function login($email, $password) {

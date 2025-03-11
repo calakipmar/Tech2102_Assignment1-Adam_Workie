@@ -3,7 +3,7 @@
     function getStudents(){
         global $db;
 
-        $query = 'SELECT * FROM student ORDER BY studentID';
+        $query = 'SELECT * FROM students ORDER BY studentID';
 
         $statement = $db->prepare($query);
         $statement->execute();
@@ -14,7 +14,7 @@
 
     function deleteStudent($studentID) {
         global $db;
-        $query = 'DELETE FROM student WHERE studentID =:id';
+        $query = 'DELETE FROM students WHERE studentID =:id';
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $studentID);
         $statement->execute();
@@ -23,7 +23,7 @@
 
     function addStudent($studentName, $studentEmail) {
         global $db;
-        $query = 'INSERT INTO student (studentName, studentEmail) VALUES (:name, :email)';
+        $query = 'INSERT INTO students (studentName, studentEmail) VALUES (:name, :email)';
         $statement = $db->prepare($query);
         $statement->bindValue(':name', $studentName);
         $statement->bindValue(':email', $studentEmail);

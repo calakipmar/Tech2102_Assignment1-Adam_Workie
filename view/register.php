@@ -8,10 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     if (!empty($username) && !empty($email) && !empty($password)) {
-        if (userExists($email)) {
-
+        if (!userExists($email)) {
+            addUser($username, $email, password_hash($password, PASSWORD_DEFAULT));
             echo "User Registered!";
-            
         }
 
         else {
@@ -27,19 +26,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include('components/nav.php'); 
 ?>
 
+<div class="register">
+    <h2>Create an Account</h2>
 
-<h2>Create an Account</h2>
+    
     <form method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
         <button type="submit">Register</button>
     </form>
-
+</div>
 <?php include('components/footer.php'); ?>
