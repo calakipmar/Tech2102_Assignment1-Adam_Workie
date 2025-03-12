@@ -16,7 +16,7 @@
         global $db;
         $query = 'DELETE FROM students WHERE studentID =:id';
         $statement = $db->prepare($query);
-        $statement->bindValue(':id', $studentID);
+        $statement->bindValue(':id', $studentID); 
         $statement->execute();
         $statement->closeCursor();
     }
@@ -29,4 +29,15 @@
         $statement->bindValue(':email', $studentEmail);
         $statement->execute();
         $statement->closeCursor();
+    }
+    
+    function studentExists($studentID){
+        global $db;
+        $query = 'SELECT * FROM students WHERE studentID = :id';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':id', $studentID);
+        $statement->execute();
+        $count = $statement->rowCount();
+        $statement->closeCursor();
+        return $count > 0;
     }

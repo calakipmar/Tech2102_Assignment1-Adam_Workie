@@ -44,7 +44,6 @@
         $user = (getUser($email));
 
         if(password_verify($password, $user["password"])){
-            header("Location: studentList.php");
             return true;
         }
         else {

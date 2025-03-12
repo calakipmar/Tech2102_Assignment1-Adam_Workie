@@ -2,6 +2,9 @@
     require('../model/Database.php');
     require('../model/userDb.php');
 
+    $notice = " ";
+    $error = " ";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $email = $_POST['email'];
@@ -10,11 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($username) && !empty($email) && !empty($password)) {
         if (!userExists($email)) {
             addUser($username, $email, password_hash($password, PASSWORD_DEFAULT));
-            echo "User Registered!";
+            $notice = "User Registered!";
+            
         }
 
         else {
-           echo "This email is already in use!";
+           $error = "This email is already in use!";
         }
     }
 }
@@ -26,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include('components/nav.php'); 
 ?>
 
-<div class="register">
+<div class="container">
     <h2>Create an Account</h2>
 
     
@@ -48,5 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <button type="submit">Register</button>
     </form>
+    <p style="color:green"> <?php echo $notice;?> </p>
+    <p style="color:red"> <?php echo $error;?> </p>
 </div>
 <?php include('components/footer.php'); ?>

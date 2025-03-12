@@ -1,29 +1,39 @@
 <?php
+    session_start();
     require('../model/Database.php');
     require('../model/studentDb.php');
-    require('../model/userDb.php');
 
-// Handle adding a student
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
-    $name = $_POST['studentName'];
-    $email = $_POST['studentEmail'];
-    
-    if (!empty($name) && !empty($email)) {
-        addStudent($name, $email);
+    $noticeDel = " ";
+    $errorDel = " ";
+
+    $students = getStudents();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_student'])) {
+        $name = $_POST['studentName'];
+        $email = $_POST['studentEmail'];
+        
+        if (!empty($name) && !empty($email)) {
+            addStudent($name, $email);
+            $_SESSION['noticeDel'] = "Student '$name' has been added.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
     }
-}
 
-// Handle deleting a student
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student'])) {
-    $id = $_POST['studentID'];
-    
-    if (!empty($id)) {
-        deleteStudent($id);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student'])) {
+        $id = $_POST['studentID'];
+        
+        if (!empty($id)) {
+            if(studentExists($id)) {
+                deleteStudent($id);
+                $_SESSION['noticeDel'] = "Student with the ID '$id' has been removed.";
+            } else {
+                $_SESSION['errorDel'] = "There is no student with the ID '$id'.";
+            }
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
     }
-}
-
-// Fetch all students
-$students = getStudents();
 ?>
 
 <?php 
@@ -31,9 +41,11 @@ $students = getStudents();
     include('components/nav.php'); 
 ?>
 
-    <h1>Student Management</h1>
+<h1>Student Management</h1>
 
-    <h2>Student List</h2>
+
+
+<div class="container">
     <table border="1">
         <tr>
             <th>ID</th>
@@ -48,24 +60,42 @@ $students = getStudents();
             </tr>
         <?php endforeach; ?>
     </table>
-
-    <h2>Add Student</h2>
-    <form method="post">
-        <label for="studentName">Name:</label>
-        <input type="text" id="studentName" name="studentName" required>
+    
         
-        <label for="studentEmail">Email:</label>
-        <input type="email" id="studentEmail" name="studentEmail" required>
+        <form method="post">
+            <h2>Add Student</h2>
+        <div>
+            <label for="studentName">Name:</label>
+            <input type="text" id="studentName" name="studentName" required>
+        </div>
+        <div>
+            <label for="studentEmail">Email:</label>
+            <input type="email" id="studentEmail" name="studentEmail" required>
+        </div>
+            <button type="submit" name="add_student">Add Student</button>
+        </form>
+       
+        <form method="post">    
+            <h2>Delete Student</h2>
+            <label for="studentID">Student ID:</label>
+        <div class="delete">
+            <input type="number" id="studentID" name="studentID" required>
+            <button type="submit" name="delete_student">Delete Student</button>
+        </div>
+            
+        </form>
         
-        <button type="submit" name="add_student">Add Student</button>
-    </form>
+        <?php
+            if (isset($_SESSION['noticeDel'])) {
+                echo "<p style='color: green;'>" . $_SESSION['noticeDel'] . "</p>";
+                unset($_SESSION['noticeDel']);
+            }
 
-    <h2>Delete Student</h2>
-    <form method="post">
-        <label for="studentID">Student ID:</label>
-        <input type="number" id="studentID" name="studentID" required>
-        
-        <button type="submit" name="delete_student">Delete Student</button>
-    </form>
+            if (isset($_SESSION['errorDel'])) {
+                echo "<p style='color: red;'>" . $_SESSION['errorDel'] . "</p>";
+                unset($_SESSION['errorDel']);
+            }
+        ?>
 
+    </div>
 <?php include('components/footer.php'); ?>
